@@ -13,7 +13,7 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String name;
-    @ManyToMany(targetEntity = Blog.class, fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity = Blog.class)
     private List<Blog> blogList;
     public Tag() {
     }

@@ -17,7 +17,8 @@ public class Blog {
     private String description;
     private String content;
 
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST,
+            CascadeType.MERGE})
     @JoinTable(
             name = "blog_tag",
             joinColumns = {@JoinColumn(name = "blog_id")},
