@@ -17,7 +17,7 @@ public class Blog {
     private String description;
     private String content;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "blog_tag",
             joinColumns = {@JoinColumn(name = "blog_id")},
@@ -26,5 +26,12 @@ public class Blog {
     private List<Tag> tagList;
 
     public Blog() {
+    }
+
+    public Blog(String tittle, String description, String content, List<Tag> tagList) {
+        this.tittle = tittle;
+        this.description = description;
+        this.content = content;
+        this.tagList = tagList;
     }
 }
