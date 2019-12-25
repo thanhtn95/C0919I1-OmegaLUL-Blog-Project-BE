@@ -15,10 +15,11 @@ public class Blog {
     private long id;
     private String tittle;
     private String description;
+    private String thumbnail;
     private String content;
 
     @ManyToMany(cascade = {CascadeType.PERSIST,
-            CascadeType.MERGE})
+            CascadeType.MERGE} ,fetch = FetchType.EAGER)
     @JoinTable(
             name = "blog_tag",
             joinColumns = {@JoinColumn(name = "blog_id")},

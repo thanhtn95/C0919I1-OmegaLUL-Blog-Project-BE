@@ -17,6 +17,14 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    public Blog findById(long id) {
+        if(blogREpository.findById(id).isPresent()){
+            return blogREpository.findById(id).get();
+        }
+        return null;
+    }
+
+    @Override
     public void save(Blog blog) {
         blogREpository.save(blog);
     }

@@ -16,6 +16,7 @@ import zone.god.blogprojectbe.service.TagService;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin("*")
@@ -27,13 +28,9 @@ public class BlogRestController {
     private TagService tagService;
 
     @PostMapping(value = "/newBlog")
-    public ResponseEntity<Blog> addBlog(@RequestBody BlogForm blogForm){
-//        List<Tag> tags = tagService.findAllById(blogForm.getTagList());
+    public ResponseEntity<Blog> addBlog(@RequestBody BlogForm blogForm) {
         Blog blog = new Blog();
-        blog.setTittle(blogForm.getTittle());
-        blog.setDescription(blogForm.getDescription());
-//        blog.setTagList(tags);
-        blog.setContent(blogForm.getContent());
+        saveToBlogFromForm(blog, blogForm);
         blogService.save(blog);
         return new ResponseEntity<>(blog, HttpStatus.CREATED);
     }
@@ -45,14 +42,29 @@ public class BlogRestController {
     }
 
     @PutMapping("/updateBlog")
-    public ResponseEntity<Blog> updateBlog(@RequestBody Blog blog) {
+    public ResponseEntity<Blog> updateBlog(@RequestBody BlogForm blogForm) {
+        Blog blog = new Blog();
+        saveToBlogFromForm(blog, blogForm);
         blogService.save(blog);
         return new ResponseEntity<>(blog, HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteBlog/{id}")
-    public ResponseEntity<Void> deleteBlog(@PathVariable("id") long id) {
+    public ResponseEntity<Blog> deleteBlog(@PathVariable("id") long id) {
+        Blog blog = blogService.findById(id);
         blogService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(blog, HttpStatus.OK);
+    }
+
+    private void saveToBlogFromForm(Blog blog, BlogForm blogForm) {
+        List<Tag> tags = tagService.findAllById(blogForm.getTagList());
+        if (!Objects.isNull(blogForm.getId())) {
+            blog.setId(blogForm.getId());
+        }
+        blog.setTittle(blogForm.getTittle());
+        blog.setDescription(blogForm.getDescription());
+        blog.setThumbnail(blogForm.getThumbnail());
+        blog.setTagList(tags);
+        blog.setContent(blogForm.getContent());
     }
 }
