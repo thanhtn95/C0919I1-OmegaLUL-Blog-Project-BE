@@ -4,6 +4,8 @@ import lombok.Data;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
+
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -17,6 +19,8 @@ public class Blog {
     private String description;
     private String thumbnail;
     private String content;
+    private String createdDate;
+    private String lastUpdatedDate;
 
     @ManyToMany(cascade = {CascadeType.PERSIST,
             CascadeType.MERGE} ,fetch = FetchType.EAGER)

@@ -15,6 +15,7 @@ import zone.god.blogprojectbe.service.TagService;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,6 +32,9 @@ public class BlogRestController {
     public ResponseEntity<Blog> addBlog(@RequestBody BlogForm blogForm) {
         Blog blog = new Blog();
         saveToBlogFromForm(blog, blogForm);
+        String now = ""+new Date();
+        blog.setCreatedDate(now);
+        blog.setLastUpdatedDate(now);
         blogService.save(blog);
         return new ResponseEntity<>(blog, HttpStatus.CREATED);
     }
@@ -43,8 +47,9 @@ public class BlogRestController {
 
     @PutMapping("/updateBlog")
     public ResponseEntity<Blog> updateBlog(@RequestBody BlogForm blogForm) {
-        Blog blog = new Blog();
+        Blog blog = blogService.findById(blogForm.getId());
         saveToBlogFromForm(blog, blogForm);
+        blog.setLastUpdatedDate(""+ new Date());
         blogService.save(blog);
         return new ResponseEntity<>(blog, HttpStatus.OK);
     }
