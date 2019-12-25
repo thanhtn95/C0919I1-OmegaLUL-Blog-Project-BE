@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/tagApi")
+@RequestMapping("/api")
 public class TagRestController {
     @Autowired
     private TagService tagService;
