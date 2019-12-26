@@ -61,6 +61,12 @@ public class BlogRestController {
         return new ResponseEntity<>(blog, HttpStatus.OK);
     }
 
+    @GetMapping("/blog/{id}")
+    public ResponseEntity<Blog> getBlogById(@PathVariable("id") long id){
+        Blog blog = blogService.findById(id);
+        return new ResponseEntity<>(blog, HttpStatus.OK);
+    }
+
     private void saveToBlogFromForm(Blog blog, BlogForm blogForm) {
         List<Tag> tags = tagService.findAllById(blogForm.getTagList());
         if (!Objects.isNull(blogForm.getId())) {
