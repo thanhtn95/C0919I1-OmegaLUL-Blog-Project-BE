@@ -32,7 +32,7 @@ public class BlogRestController {
     public ResponseEntity<Blog> addBlog(@RequestBody BlogForm blogForm) {
         Blog blog = new Blog();
         saveToBlogFromForm(blog, blogForm);
-        String now = ""+new Date();
+        String now = "" + new Date();
         blog.setCreatedDate(now);
         blog.setLastUpdatedDate(now);
         blogService.save(blog);
@@ -49,7 +49,7 @@ public class BlogRestController {
     public ResponseEntity<Blog> updateBlog(@RequestBody BlogForm blogForm) {
         Blog blog = blogService.findById(blogForm.getId());
         saveToBlogFromForm(blog, blogForm);
-        blog.setLastUpdatedDate(""+ new Date());
+        blog.setLastUpdatedDate("" + new Date());
         blogService.save(blog);
         return new ResponseEntity<>(blog, HttpStatus.OK);
     }
@@ -62,9 +62,16 @@ public class BlogRestController {
     }
 
     @GetMapping("/blog/{id}")
-    public ResponseEntity<Blog> getBlogById(@PathVariable("id") long id){
+    public ResponseEntity<Blog> getBlogById(@PathVariable("id") long id) {
         Blog blog = blogService.findById(id);
         return new ResponseEntity<>(blog, HttpStatus.OK);
+    }
+
+    @GetMapping("/blog/search/{tittle}")
+    public ResponseEntity<List<Blog>> searchByTittle(@PathVariable("tittle") String tittle) {
+        List<Blog> blogs;
+        blogs = blogService.findByTittle(tittle);
+        return new ResponseEntity<>(blogs, HttpStatus.OK);
     }
 
     private void saveToBlogFromForm(Blog blog, BlogForm blogForm) {

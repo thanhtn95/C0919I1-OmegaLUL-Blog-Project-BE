@@ -30,6 +30,11 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    public List<Blog> findByTittle(String keyWord) {
+        return blogREpository.findAllByTittleContaining(keyWord);
+    }
+
+    @Override
     public void delete(long id) {
         blogREpository.deleteById(id);
     }

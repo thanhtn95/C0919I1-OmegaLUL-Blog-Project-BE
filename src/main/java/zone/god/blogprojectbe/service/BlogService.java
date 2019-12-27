@@ -10,6 +10,6 @@ public interface BlogService {
     List<Blog> findAll();
     Blog findById(long id);
     void save(Blog blog);
-
+    List<Blog> findByTittle(String keyWord);
     void delete(long id);
 }
