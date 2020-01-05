@@ -1,10 +1,6 @@
 package zone.god.blogprojectbe.controller;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import zone.god.blogprojectbe.model.Blog;
@@ -13,8 +9,6 @@ import zone.god.blogprojectbe.model.Tag;
 import zone.god.blogprojectbe.service.BlogService;
 import zone.god.blogprojectbe.service.TagService;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +26,9 @@ public class BlogRestController {
     public ResponseEntity<Blog> addBlog(@RequestBody BlogForm blogForm) {
         Blog blog = new Blog();
         saveToBlogFromForm(blog, blogForm);
+        if(blog.getContent().equals("") || blog.getDescription().equals("")|| blog.getTittle().equals("")){
+            return new ResponseEntity<>(blog, HttpStatus.EXPECTATION_FAILED);
+        }
         String now = "" + new Date();
         blog.setCreatedDate(now);
         blog.setLastUpdatedDate(now);
