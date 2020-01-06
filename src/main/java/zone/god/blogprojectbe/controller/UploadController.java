@@ -21,7 +21,7 @@ public class UploadController {
     Environment env;
 
     @PostMapping(value = "/upload", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> doUpload(@RequestParam("upload") MultipartFile file) {
+    public ResponseEntity<JPayload> doUpload(@RequestParam("upload") MultipartFile file) {
         String fileName = file.getOriginalFilename();
         String fileUpload = env.getProperty("uploadPath").toString();
         try {
@@ -29,6 +29,7 @@ public class UploadController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new ResponseEntity<>("http://localhost:8080/image/" + fileName, HttpStatus.ACCEPTED);
+        JPayload jPayload = new JPayload(1, fileName, "http://localhost:8080/image/" + fileName);
+        return new ResponseEntity<>(jPayload, HttpStatus.OK);
     }
 }
