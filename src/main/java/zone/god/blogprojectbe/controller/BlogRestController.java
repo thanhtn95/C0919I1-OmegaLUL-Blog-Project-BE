@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import zone.god.blogprojectbe.model.Blog;
 import zone.god.blogprojectbe.model.BlogForm;
 import zone.god.blogprojectbe.model.Tag;
+import zone.god.blogprojectbe.model.User;
 import zone.god.blogprojectbe.service.BlogService;
 import zone.god.blogprojectbe.service.TagService;
+import zone.god.blogprojectbe.service.UserService;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -27,12 +29,19 @@ public class BlogRestController {
     private BlogService blogService;
     @Autowired
     private TagService tagService;
+    @Autowired
+    private UserService userService;
 
     @PostMapping(value = "/newBlog")
     public ResponseEntity<Blog> addBlog(@RequestBody BlogForm blogForm) {
         Blog blog = new Blog();
         saveToBlogFromForm(blog, blogForm);
         String now = ""+new Date();
+        if(blog.getContent().equals("") || blog.getDescription().equals("")|| blog.getTittle().equals("")){
+            return new ResponseEntity<>(blog, HttpStatus.EXPECTATION_FAILED);
+        }
+        User user = userService.findByUsername(blogForm.getUsername()).get();
+        blog.setUser(user);
         blog.setCreatedDate(now);
         blog.setLastUpdatedDate(now);
         blogService.save(blog);
@@ -50,6 +59,9 @@ public class BlogRestController {
         Blog blog = blogService.findById(blogForm.getId());
         saveToBlogFromForm(blog, blogForm);
         blog.setLastUpdatedDate(""+ new Date());
+        User user = userService.findByUsername(blogForm.getUsername()).get();
+        blog.setUser(user);
+        blog.setLastUpdatedDate("" + new Date());
         blogService.save(blog);
         return new ResponseEntity<>(blog, HttpStatus.OK);
     }

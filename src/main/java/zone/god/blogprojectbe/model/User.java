@@ -8,6 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -26,11 +27,11 @@ public class User {
     private long id;
 
     @NotBlank
-    @Size(min=3, max = 50)
+    @Size(min = 3, max = 50)
     private String name;
 
     @NotBlank
-    @Size(min=3, max = 50)
+    @Size(min = 3, max = 50)
     private String username;
 
     @NaturalId
@@ -40,7 +41,7 @@ public class User {
     private String email;
 
     @NotBlank
-    @Size(min=6, max = 100)
+    @Size(min = 6, max = 100)
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -48,6 +49,9 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(targetEntity = Blog.class)
+    private List<Blog> blogs;
 
     public User() {
     }

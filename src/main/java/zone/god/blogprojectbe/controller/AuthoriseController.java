@@ -17,9 +17,9 @@ import zone.god.blogprojectbe.model.message.request.LoginForm;
 import zone.god.blogprojectbe.model.message.request.SignUpForm;
 import zone.god.blogprojectbe.model.message.response.JwtResponse;
 import zone.god.blogprojectbe.model.message.response.ResponseMessage;
-import zone.god.blogprojectbe.repository.RoleRepository;
-import zone.god.blogprojectbe.repository.UserRepository;
 import zone.god.blogprojectbe.security.jwt.JwtProvider;
+import zone.god.blogprojectbe.service.RoleService;
+import zone.god.blogprojectbe.service.UserService;
 
 import javax.validation.Valid;
 import java.util.HashSet;
@@ -33,10 +33,10 @@ public class AuthoriseController {
     AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
-    RoleRepository roleRepository;
+    private RoleService roleService;
 
     @Autowired
     PasswordEncoder encoder;
@@ -60,12 +60,12 @@ public class AuthoriseController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpForm signUpRequest) {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+        if (userService.existsByUsername(signUpRequest.getUsername())) {
             return new ResponseEntity<>(new ResponseMessage("Fail -> Username is already taken!"),
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+        if (userService.existsByEmail(signUpRequest.getEmail())) {
             return new ResponseEntity<>(new ResponseMessage("Fail -> Email is already in use!"),
                     HttpStatus.BAD_REQUEST);
         }
@@ -83,20 +83,20 @@ public class AuthoriseController {
         strRoles.forEach(role -> {
             switch (role) {
                 case "admin":
-                    Role adminRole = roleRepository.findByName(RoleName.ROLE_ADMIN)
+                    Role adminRole = roleService.findByName(RoleName.ROLE_ADMIN)
                             .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
                     roles.add(adminRole);
 
                     break;
                 default:
-                    Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
+                    Role userRole = roleService.findByName(RoleName.ROLE_USER)
                             .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
                     roles.add(userRole);
             }
         });
 
         user.setRoles(roles);
-        userRepository.save(user);
+        userService.saveUser(user);
 
         return new ResponseEntity<>(new ResponseMessage("User registered successfully!"), HttpStatus.OK);
     }
