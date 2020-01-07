@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.*;
 import zone.god.blogprojectbe.model.Blog;
 import zone.god.blogprojectbe.model.BlogForm;
 import zone.god.blogprojectbe.model.Tag;
+import zone.god.blogprojectbe.model.User;
 import zone.god.blogprojectbe.service.BlogService;
 import zone.god.blogprojectbe.service.TagService;
+import zone.god.blogprojectbe.service.UserService;
 
 import java.util.Date;
 import java.util.List;
@@ -21,6 +23,8 @@ public class BlogRestController {
     private BlogService blogService;
     @Autowired
     private TagService tagService;
+    @Autowired
+    private UserService userService;
 
     @PostMapping(value = "/newBlog")
     public ResponseEntity<Blog> addBlog(@RequestBody BlogForm blogForm) {
@@ -30,6 +34,8 @@ public class BlogRestController {
             return new ResponseEntity<>(blog, HttpStatus.EXPECTATION_FAILED);
         }
         String now = "" + new Date();
+        User user = userService.findByUsername(blogForm.getUsername()).get();
+        blog.setUser(user);
         blog.setCreatedDate(now);
         blog.setLastUpdatedDate(now);
         blogService.save(blog);
@@ -46,6 +52,8 @@ public class BlogRestController {
     public ResponseEntity<Blog> updateBlog(@RequestBody BlogForm blogForm) {
         Blog blog = blogService.findById(blogForm.getId());
         saveToBlogFromForm(blog, blogForm);
+        User user = userService.findByUsername(blogForm.getUsername()).get();
+        blog.setUser(user);
         blog.setLastUpdatedDate("" + new Date());
         blogService.save(blog);
         return new ResponseEntity<>(blog, HttpStatus.OK);

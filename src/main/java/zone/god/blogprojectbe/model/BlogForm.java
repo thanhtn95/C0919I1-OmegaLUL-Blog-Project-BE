@@ -14,6 +14,7 @@ public class BlogForm {
     private String content;
     private String createdDate;
     private String lastUpdatedDate;
+    private String username;
 
     public BlogForm() {
     }

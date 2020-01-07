@@ -30,6 +30,9 @@ public class Blog {
             inverseJoinColumns = {@JoinColumn(name = "tag_id")}
     )
     private List<Tag> tagList;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Blog() {
     }
