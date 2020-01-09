@@ -29,6 +29,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
     compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+    // [firebase] Firebase
+    implementation ('com.google.api-client:google-api-client:1.23.0')
+    implementation ('com.google.firebase:firebase-admin:5.11.0')
+    implementation('com.google.guava:guava:20.0')
+    // [swagger] Swagger doc api
+    implementation('io.springfox:springfox-swagger2:2.7.0')
+    implementation('io.springfox:springfox-swagger-ui:2.7.0')
+
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

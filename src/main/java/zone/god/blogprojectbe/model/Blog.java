@@ -1,5 +1,6 @@
 package zone.god.blogprojectbe.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.hibernate.annotations.Cascade;
 
@@ -21,6 +22,8 @@ public class Blog {
     private String content;
     private String createdDate;
     private String lastUpdatedDate;
+    @JsonProperty
+    private boolean isPrivate;
 
     @ManyToMany(cascade = {CascadeType.PERSIST,
             CascadeType.MERGE} ,fetch = FetchType.EAGER)

@@ -3,6 +3,7 @@ package zone.god.blogprojectbe.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import zone.god.blogprojectbe.model.Blog;
+import zone.god.blogprojectbe.model.User;
 import zone.god.blogprojectbe.repository.BlogREpository;
 
 import java.util.List;
@@ -37,5 +38,10 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public void delete(long id) {
         blogREpository.deleteById(id);
+    }
+
+    @Override
+    public List<Blog> findByUser(User user) {
+        return blogREpository.findAllByUser(user);
     }
 }

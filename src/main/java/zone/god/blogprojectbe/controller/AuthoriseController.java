@@ -46,7 +46,9 @@ public class AuthoriseController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginForm loginRequest) {
-
+        if (!userService.existsByUsername(loginRequest.getUsername())) {
+            return new ResponseEntity<>(new ResponseMessage("User with that username isn't exist"), HttpStatus.BAD_REQUEST);
+        }
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 

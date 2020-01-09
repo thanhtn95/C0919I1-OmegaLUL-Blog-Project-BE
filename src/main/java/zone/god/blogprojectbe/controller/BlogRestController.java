@@ -1,4 +1,5 @@
 package zone.god.blogprojectbe.controller;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class BlogRestController {
     public ResponseEntity<Blog> addBlog(@RequestBody BlogForm blogForm) {
         Blog blog = new Blog();
         saveToBlogFromForm(blog, blogForm);
-        if(blog.getContent().equals("") || blog.getDescription().equals("")|| blog.getTittle().equals("")){
+        if (blog.getContent().equals("") || blog.getDescription().equals("") || blog.getTittle().equals("")) {
             return new ResponseEntity<>(blog, HttpStatus.EXPECTATION_FAILED);
         }
         String now = "" + new Date();
@@ -79,6 +80,13 @@ public class BlogRestController {
         return new ResponseEntity<>(blogs, HttpStatus.OK);
     }
 
+    @GetMapping("/blog/userBlogs/{username}")
+    public ResponseEntity<List<Blog>> getUserBlogList(@PathVariable("username") String username) {
+        User user = userService.findByUsername(username).get();
+        List<Blog> blogs = blogService.findByUser(user);
+        return new ResponseEntity<>(blogs, HttpStatus.ACCEPTED);
+    }
+
     private void saveToBlogFromForm(Blog blog, BlogForm blogForm) {
         List<Tag> tags = tagService.findAllById(blogForm.getTagList());
         if (!Objects.isNull(blogForm.getId())) {
@@ -89,5 +97,6 @@ public class BlogRestController {
         blog.setThumbnail(blogForm.getThumbnail());
         blog.setTagList(tags);
         blog.setContent(blogForm.getContent());
+        blog.setPrivate(blogForm.isPrivate());
     }
 }
