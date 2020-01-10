@@ -23,12 +23,34 @@ public class FirebaseStorageFileUploadService {
                 storageDir = "files";
             }
             String downloadUrl = firebaseStorageUploadService.upload(
-                        ApplicationConstants.BASE_PACKAGE_NAME + "/" + storageDir,
+                    ApplicationConstants.BASE_PACKAGE_NAME + "/" + storageDir,
                     multipartFile.getOriginalFilename(), multipartFile.getBytes(), contentType);
 //            System.out.println(downloadUrl);
-            return new JPayload(1,multipartFile.getOriginalFilename(),downloadUrl);
+            return new JPayload(1, multipartFile.getOriginalFilename(), downloadUrl);
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    public String uploadMultipleFileToFireBase(MultipartFile[] files) {
+        try {
+            String result = "";
+            for (MultipartFile file : files) {
+                String contentType = file.getContentType();
+                String storageDir;
+                if (contentType.startsWith("image")) {
+                    storageDir = "images";
+                } else {
+                    storageDir = "files";
+                }
+                String downloadUrl = firebaseStorageUploadService.upload(ApplicationConstants.BASE_PACKAGE_NAME + "/" + storageDir,
+                        file.getOriginalFilename(), file.getBytes(), contentType);
+                result += downloadUrl + ",";
+            }
+            result = result.substring(0,result.length()-1);
+            return result;
+        } catch (IOException e) {
+            return "fail";
         }
     }
 }

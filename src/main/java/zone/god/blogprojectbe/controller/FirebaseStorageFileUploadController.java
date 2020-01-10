@@ -27,9 +27,19 @@ public class FirebaseStorageFileUploadController {
     public ResponseEntity<JPayload> uploadFileToFirebaseStorage(@RequestParam(value = "upload", required = false) MultipartFile file) {
 
         JPayload jPayload = firebaseStorageFileUploadService.uploadFileToFirebaseStorage(file);
-        if(jPayload != null){
+        if (jPayload != null) {
             return new ResponseEntity<>(jPayload, HttpStatus.ACCEPTED);
         }
         return new ResponseEntity<>(jPayload, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @PostMapping(value = "/upload-multi", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String[]> uploadMultipleToFireBase(@RequestParam("upload") MultipartFile[] files) {
+        String result = firebaseStorageFileUploadService.uploadMultipleFileToFireBase(files);
+        String[] test = result.split(",");
+        if (result != "") {
+            return new ResponseEntity<String[]>(test, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
     }
 }

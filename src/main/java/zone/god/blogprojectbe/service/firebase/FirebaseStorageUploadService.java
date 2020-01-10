@@ -15,6 +15,9 @@ public class FirebaseStorageUploadService {
                          byte[] data, String contentType) throws StorageException {
         Blob file = StorageClient.getInstance().bucket()
                 .create(dir + "/" + fileName, data, contentType);
-        return googleStorageApi + "/" + file.getBucket() + "/zone.god.blogprojectbe/images/" + fileName;
+        if(contentType.startsWith("image")){
+            return googleStorageApi + "/" + file.getBucket() + "/zone.god.blogprojectbe/images/" + fileName;
+        }
+        return googleStorageApi + "/" + file.getBucket() + "/zone.god.blogprojectbe/files/" + fileName;
     }
 }
