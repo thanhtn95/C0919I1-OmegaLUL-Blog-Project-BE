@@ -3,10 +3,7 @@ package zone.god.blogprojectbe.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import zone.god.blogprojectbe.model.Tag;
 import zone.god.blogprojectbe.service.TagService;
 
@@ -23,5 +20,11 @@ public class TagRestController {
     public ResponseEntity<List<Tag>> getTagList() {
         List<Tag> tagList = tagService.findAll();
         return new ResponseEntity<>(tagList, HttpStatus.OK);
+    }
+
+    @PostMapping("/newTag")
+    public ResponseEntity<Tag> addNewTag(@RequestBody Tag tag) {
+        Tag result = tagService.addTag(tag);
+        return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
     }
 }
