@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import zone.god.blogprojectbe.model.Tag;
 import zone.god.blogprojectbe.repository.TagRepository;
+import zone.god.blogprojectbe.service.TagService;
 
 import java.util.List;
 
