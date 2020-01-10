@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import zone.god.blogprojectbe.model.Blog;
 import zone.god.blogprojectbe.model.User;
 import zone.god.blogprojectbe.repository.BlogREpository;
+import zone.god.blogprojectbe.service.BlogService;
 
 import java.util.List;
 

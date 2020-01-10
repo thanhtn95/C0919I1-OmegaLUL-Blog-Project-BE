@@ -47,6 +47,13 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     testImplementation 'org.springframework.security:spring-security-test'
+
+
+    // [firebase] Firebase
+    implementation ('com.google.api-client:google-api-client:1.23.0')
+    implementation ('com.google.firebase:firebase-admin:5.11.0')
+    implementation('com.google.guava:guava:20.0')
+
 }
 
 test {
