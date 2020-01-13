@@ -11,10 +11,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class AdditionalResourceWebConfiguration implements WebMvcConfigurer {
     @Autowired
-    Environment ev;
+    Environment evr;
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        String uploadPath = ev.getProperty("uploadPath");
+        String uploadPath = evr.getProperty("uploadPath");
         registry.addResourceHandler("/image/**").addResourceLocations("file:"+uploadPath);
     }
 
