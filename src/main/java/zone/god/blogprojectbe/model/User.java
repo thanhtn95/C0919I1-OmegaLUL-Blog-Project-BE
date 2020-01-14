@@ -52,6 +52,8 @@ public class User {
 
     @OneToMany(targetEntity = Blog.class)
     private List<Blog> blogs;
+    @OneToMany(targetEntity = ImageBlog.class)
+    private List<ImageBlog> imageBlogs;
 
     public User() {
     }
