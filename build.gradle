@@ -36,7 +36,10 @@ dependencies {
     // [swagger] Swagger doc api
     implementation('io.springfox:springfox-swagger2:2.7.0')
     implementation('io.springfox:springfox-swagger-ui:2.7.0')
-
+    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-client
+    compile group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.2.1.RELEASE'
+    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-jose
+    compile group: 'org.springframework.security', name: 'spring-security-oauth2-jose', version: '5.2.1.RELEASE'
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

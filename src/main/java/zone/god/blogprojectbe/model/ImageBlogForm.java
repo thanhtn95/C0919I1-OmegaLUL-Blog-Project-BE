@@ -3,27 +3,21 @@ package zone.god.blogprojectbe.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import javax.persistence.*;
+import java.io.Serializable;
 
-@Entity
-@Table(name = "imageBlogs")
 @Data
-public class ImageBlog {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class ImageBlogForm implements Serializable {
     private long id;
     private String tittle;
     private String description;
     private String createdDate;
     private String lastUpdatedDate;
     private String imageUrls;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private String username;
     @JsonProperty
     private boolean isPrivate;
 
-    public ImageBlog() {
+    public ImageBlogForm() {
     }
+
 }

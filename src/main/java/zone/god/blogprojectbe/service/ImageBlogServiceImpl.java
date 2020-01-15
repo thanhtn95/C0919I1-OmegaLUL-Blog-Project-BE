@@ -27,4 +27,12 @@ public class ImageBlogServiceImpl implements ImageBlogService {
     public void deleteImageBlog(Long id) {
         imageBlogRepository.deleteById(id);
     }
+
+    @Override
+    public ImageBlog findById(Long id) {
+        if (imageBlogRepository.findById(id).isPresent()) {
+            return imageBlogRepository.findById(id).get();
+        }
+        return null;
+    }
 }

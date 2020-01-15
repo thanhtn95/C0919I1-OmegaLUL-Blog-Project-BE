@@ -60,11 +60,15 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/blog/**").permitAll()
                 .antMatchers("/api/blogList").permitAll()
                 .antMatchers("/image/**").permitAll()
-                .antMatchers("/api/newTag").permitAll()
+//                .antMatchers("/api/newTag").permitAll()
+                .antMatchers("/api/tagList").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//        http.authorizeRequests().anyRequest().authenticated()
+//                .and()
+//                .oauth2Login();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }

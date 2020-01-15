@@ -8,4 +8,5 @@ public interface ImageBlogService {
     void save(ImageBlog imageBlog);
     List<ImageBlog> findAll();
     void deleteImageBlog(Long id);
+    ImageBlog findById(Long id);
 }

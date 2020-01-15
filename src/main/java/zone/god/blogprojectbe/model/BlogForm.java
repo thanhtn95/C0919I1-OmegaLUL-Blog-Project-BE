@@ -22,4 +22,5 @@ public class BlogForm implements Serializable {
 
     public BlogForm() {
     }
+
 }
