@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import zone.god.blogprojectbe.model.Role;
 import zone.god.blogprojectbe.model.RoleName;
+import zone.god.blogprojectbe.model.SocialUser;
 import zone.god.blogprojectbe.model.User;
 import zone.god.blogprojectbe.model.message.request.LoginForm;
 import zone.god.blogprojectbe.model.message.request.SignUpForm;
@@ -102,4 +103,41 @@ public class AuthoriseController {
 
         return new ResponseEntity<>(new ResponseMessage("User registered successfully!"), HttpStatus.OK);
     }
+
+    @PostMapping("/socialLogin")
+    public ResponseEntity<?> loginWithSocial(@RequestBody SocialUser socialUser) {
+        if (userService.existsByEmail(socialUser.email)) {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(socialUser.email, socialUser.email));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            String jwt = jwtProvider.generateJwtToken(authentication);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities()));
+        } else {
+            User user = new User();
+            user.setName(socialUser.getName());
+            user.setUsername(socialUser.getEmail());
+            user.setEmail(socialUser.getEmail());
+            user.setPassword(encoder.encode(socialUser.getEmail()));
+            Set<Role> roles = new HashSet<>();
+            Role userRole = roleService.findByName(RoleName.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
+            roles.add(userRole);
+            user.setRoles(roles);
+            userService.saveUser(user);
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(socialUser.email, socialUser.email));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            String jwt = jwtProvider.generateJwtToken(authentication);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities()));
+        }
+    }
+
 }
