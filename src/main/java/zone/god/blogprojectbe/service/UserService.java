@@ -9,4 +9,5 @@ public interface UserService {
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
     void saveUser(User user);
+    User findByEmail(String email);
 }

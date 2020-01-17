@@ -107,15 +107,8 @@ public class AuthoriseController {
     @PostMapping("/socialLogin")
     public ResponseEntity<?> loginWithSocial(@RequestBody SocialUser socialUser) {
         if (userService.existsByEmail(socialUser.email)) {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(socialUser.email, socialUser.email));
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            String jwt = jwtProvider.generateJwtToken(authentication);
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-            return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities()));
+            return ResponseEntity.ok(getJwtResponseForSocialLogin(socialUser));
         } else {
             User user = new User();
             user.setName(socialUser.getName());
@@ -128,16 +121,18 @@ public class AuthoriseController {
             roles.add(userRole);
             user.setRoles(roles);
             userService.saveUser(user);
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(socialUser.email, socialUser.email));
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            String jwt = jwtProvider.generateJwtToken(authentication);
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-            return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities()));
+            return ResponseEntity.ok(getJwtResponseForSocialLogin(socialUser));
         }
     }
 
+    private JwtResponse getJwtResponseForSocialLogin(SocialUser socialUser) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(socialUser.email, socialUser.email));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String jwt = jwtProvider.generateJwtToken(authentication);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities());
+    }
 }
