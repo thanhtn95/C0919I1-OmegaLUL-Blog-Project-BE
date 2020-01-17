@@ -105,7 +105,7 @@ public class AuthoriseController {
     }
 
     @PostMapping("/socialLogin")
-    public ResponseEntity<?> loginWithSocial(@RequestBody SocialUser socialUser) {
+    public ResponseEntity<?> loginWithSocialAccount(@RequestBody SocialUser socialUser) {
         if (userService.existsByEmail(socialUser.email)) {
 
             return ResponseEntity.ok(getJwtResponseForSocialLogin(socialUser));
