@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import zone.god.blogprojectbe.model.ImageBlog;
 import zone.god.blogprojectbe.model.ImageBlogForm;
 import zone.god.blogprojectbe.model.User;
+import zone.god.blogprojectbe.model.message.response.ResponseMessage;
 import zone.god.blogprojectbe.service.ImageBlogService;
 import zone.god.blogprojectbe.service.UserService;
 import zone.god.blogprojectbe.service.firebase.FirebaseStorageFileUploadService;
@@ -29,9 +30,12 @@ public class ImageBlogRestController {
     private UserService userService;
 
     @PostMapping("/newImageBlog")
-    public ResponseEntity<ImageBlog> newImageBlog(@RequestParam("imageBlogInfo") String imageBlogInfo, @RequestParam("images") MultipartFile[] files) throws JsonProcessingException {
+    public ResponseEntity<?> newImageBlog(@RequestParam("imageBlogInfo") String imageBlogInfo, @RequestParam("images") Optional<MultipartFile[]> files) throws JsonProcessingException {
+        if(!files.isPresent()){
+            return new ResponseEntity<>(new ResponseMessage("No Input Image"), HttpStatus.BAD_REQUEST);
+        }
         ImageBlogForm imageBlogForm = new ObjectMapper().readValue(imageBlogInfo, ImageBlogForm.class);
-        String imgUrls = firebaseStorageFileUploadService.uploadMultipleFileToFireBase(files);
+        String imgUrls = firebaseStorageFileUploadService.uploadMultipleFileToFireBase(files.get());
         ImageBlog imageBlog = new ImageBlog();
         imageBlog.setImageUrls(imgUrls);
         setDataFromForm(imageBlogForm, imageBlog);
@@ -59,7 +63,7 @@ public class ImageBlogRestController {
     }
 
     @PutMapping("/updateImgBlog")
-    public ResponseEntity<ImageBlog> updateImageBlog(@RequestParam("imageBlogInfo") String imageBlogInfo, @RequestParam("images") Optional<MultipartFile[]> files) throws JsonProcessingException {
+    public ResponseEntity<?> updateImageBlog(@RequestParam("imageBlogInfo") String imageBlogInfo, @RequestParam("images") Optional<MultipartFile[]> files) throws JsonProcessingException {
         ImageBlogForm imageBlogForm = new ObjectMapper().readValue(imageBlogInfo, ImageBlogForm.class);
         ImageBlog imageBlog = new ImageBlog();
         imageBlog.setId(imageBlogForm.getId());
@@ -67,7 +71,11 @@ public class ImageBlogRestController {
             String imgUrls = firebaseStorageFileUploadService.uploadMultipleFileToFireBase(files.get());
             imageBlog.setImageUrls(imageBlogForm.getImageUrls() + "," + imgUrls);
         } else {
-            imageBlog.setImageUrls(imageBlogForm.getImageUrls());
+            if(imageBlogForm.getImageUrls().length() == 0){
+                return new ResponseEntity<>(new ResponseMessage("No Input Image"), HttpStatus.BAD_REQUEST);
+            }else {
+                imageBlog.setImageUrls(imageBlogForm.getImageUrls());
+            }
         }
         setDataFromForm(imageBlogForm, imageBlog);
         imageBlogService.save(imageBlog);

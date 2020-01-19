@@ -107,7 +107,9 @@ public class AuthoriseController {
     @PostMapping("/socialLogin")
     public ResponseEntity<?> loginWithSocialAccount(@RequestBody SocialUser socialUser) {
         if (userService.existsByEmail(socialUser.email)) {
-
+            if (getJwtResponseForSocialLogin(socialUser) == null) {
+                return new ResponseEntity<>(new ResponseMessage("That email has already been registed with an username! Please login with that username instead"), HttpStatus.BAD_REQUEST);
+            }
             return ResponseEntity.ok(getJwtResponseForSocialLogin(socialUser));
         } else {
             User user = new User();
@@ -126,13 +128,17 @@ public class AuthoriseController {
     }
 
     private JwtResponse getJwtResponseForSocialLogin(SocialUser socialUser) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(socialUser.email, socialUser.email));
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(socialUser.email, socialUser.email));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = jwtProvider.generateJwtToken(authentication);
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities());
+            String jwt = jwtProvider.generateJwtToken(authentication);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            return new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities());
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
