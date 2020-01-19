@@ -45,6 +45,7 @@ public class FirebaseStorageFileUploadService {
                 }
                 String downloadUrl = firebaseStorageUploadService.upload(ApplicationConstants.BASE_PACKAGE_NAME + "/" + storageDir,
                         file.getOriginalFilename(), file.getBytes(), contentType);
+                downloadUrl = downloadUrl.replace("http","https");
                 result += downloadUrl + ",";
             }
             result = result.substring(0,result.length()-1);
