@@ -79,7 +79,7 @@ public class AuthoriseController {
         user.setUsername(signUpRequest.getUsername());
         user.setEmail(signUpRequest.getEmail());
         user.setPassword(encoder.encode(signUpRequest.getPassword()));
-
+        user.setProvider("OmegaLUL");
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
 
@@ -117,6 +117,8 @@ public class AuthoriseController {
             user.setUsername(socialUser.getEmail());
             user.setEmail(socialUser.getEmail());
             user.setPassword(encoder.encode(socialUser.getEmail()));
+            user.setAvatar(socialUser.image);
+            user.setProvider(socialUser.provider);
             Set<Role> roles = new HashSet<>();
             Role userRole = roleService.findByName(RoleName.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
@@ -125,6 +127,12 @@ public class AuthoriseController {
             userService.saveUser(user);
             return ResponseEntity.ok(getJwtResponseForSocialLogin(socialUser));
         }
+    }
+
+    @PostMapping("/user")
+    public ResponseEntity<?> getUserbyUsername(@RequestBody String username) {
+        User user = userService.findByUsername(username).get();
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     private JwtResponse getJwtResponseForSocialLogin(SocialUser socialUser) {

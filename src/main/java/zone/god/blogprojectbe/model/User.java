@@ -43,7 +43,8 @@ public class User {
     @NotBlank
     @Size(min = 6, max = 100)
     private String password;
-
+    private String provider;
+    private String avatar;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
