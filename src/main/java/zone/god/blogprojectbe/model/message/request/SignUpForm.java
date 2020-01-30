@@ -25,6 +25,7 @@ public class SignUpForm {
     @NotBlank
     @Size(min = 6, max = 40)
     private String password;
+    private String avatar;
 
     private Set<String> role;
 }

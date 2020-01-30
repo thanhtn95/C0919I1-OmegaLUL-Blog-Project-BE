@@ -135,6 +135,11 @@ public class AuthoriseController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @PostMapping("/changePass")
+    public ResponseEntity<?> changePassword(){
+        return null;
+    }
+
     private JwtResponse getJwtResponseForSocialLogin(SocialUser socialUser) {
         try {
             Authentication authentication = authenticationManager.authenticate(
