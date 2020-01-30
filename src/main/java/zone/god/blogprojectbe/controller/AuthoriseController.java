@@ -1,7 +1,11 @@
 package zone.god.blogprojectbe.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.protocol.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,10 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import zone.god.blogprojectbe.model.Role;
-import zone.god.blogprojectbe.model.RoleName;
-import zone.god.blogprojectbe.model.SocialUser;
-import zone.god.blogprojectbe.model.User;
+import org.springframework.web.multipart.MultipartFile;
+import zone.god.blogprojectbe.JsonPayload.JPayload;
+import zone.god.blogprojectbe.model.*;
 import zone.god.blogprojectbe.model.message.request.LoginForm;
 import zone.god.blogprojectbe.model.message.request.SignUpForm;
 import zone.god.blogprojectbe.model.message.response.JwtResponse;
@@ -21,6 +24,7 @@ import zone.god.blogprojectbe.model.message.response.ResponseMessage;
 import zone.god.blogprojectbe.security.jwt.JwtProvider;
 import zone.god.blogprojectbe.service.RoleService;
 import zone.god.blogprojectbe.service.UserService;
+import zone.god.blogprojectbe.service.firebase.FirebaseStorageFileUploadService;
 
 import javax.validation.Valid;
 import java.util.HashSet;
@@ -44,6 +48,9 @@ public class AuthoriseController {
 
     @Autowired
     JwtProvider jwtProvider;
+
+    @Autowired
+    private FirebaseStorageFileUploadService firebaseStorageFileUploadService;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginForm loginRequest) {
@@ -80,6 +87,7 @@ public class AuthoriseController {
         user.setEmail(signUpRequest.getEmail());
         user.setPassword(encoder.encode(signUpRequest.getPassword()));
         user.setProvider("OmegaLUL");
+        user.setAvatar(signUpRequest.getAvatar());
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
 
@@ -136,8 +144,16 @@ public class AuthoriseController {
     }
 
     @PostMapping("/changePass")
-    public ResponseEntity<?> changePassword(){
-        return null;
+    public ResponseEntity<?> changePassword(@RequestParam("loginForm") String loginInfo, @RequestParam("newPassword") String newPassword) throws JsonProcessingException {
+        LoginForm loginForm = new ObjectMapper().readValue(loginInfo, LoginForm.class);
+        User user = userService.findByUsername(loginForm.getUsername()).get();
+        if (encoder.matches(loginForm.getPassword(), user.getPassword())) {
+            user.setPassword(encoder.encode(newPassword));
+            userService.saveUser(user);
+            return new ResponseEntity<>(new ResponseMessage("Password changed succces ;)"), HttpStatus.ACCEPTED);
+
+        }
+        return new ResponseEntity<>(new ResponseMessage("Wrong current password :("), HttpStatus.NOT_ACCEPTABLE);
     }
 
     private JwtResponse getJwtResponseForSocialLogin(SocialUser socialUser) {
@@ -153,5 +169,11 @@ public class AuthoriseController {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @PostMapping("/avatarUpload")
+    public ResponseEntity<String> uploadAvatar(@RequestParam("avatarImg") MultipartFile multipartFile) {
+        String downloadUrl = firebaseStorageFileUploadService.uploadAvatarToFireBase(multipartFile);
+        return new ResponseEntity<>(downloadUrl, HttpStatus.ACCEPTED);
     }
 }

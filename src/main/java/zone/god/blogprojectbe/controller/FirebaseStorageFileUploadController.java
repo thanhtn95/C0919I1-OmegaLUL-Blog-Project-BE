@@ -39,14 +39,4 @@ public class FirebaseStorageFileUploadController {
         }
         return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
     }
-
-    @PostMapping("/avatarUpload")
-    public ResponseEntity<String> upLoadAvatar(@RequestBody MultipartFile file) {
-        JPayload jPayload = firebaseStorageFileUploadService.uploadFileToFirebaseStorage(file);
-        if (jPayload != null) {
-            String avatarUrl = jPayload.getUrl();
-            return new ResponseEntity<>(avatarUrl, HttpStatus.ACCEPTED);
-        }
-        return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
-    }
 }

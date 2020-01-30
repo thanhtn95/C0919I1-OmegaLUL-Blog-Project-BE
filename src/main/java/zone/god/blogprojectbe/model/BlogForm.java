@@ -19,7 +19,6 @@ public class BlogForm implements Serializable {
     private String username;
     @JsonProperty
     private boolean isPrivate;
-
     public BlogForm() {
     }
 

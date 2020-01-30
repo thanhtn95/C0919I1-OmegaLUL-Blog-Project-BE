@@ -6,6 +6,7 @@ import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class Blog {
     private String lastUpdatedDate;
     @JsonProperty
     private boolean isPrivate;
+    private int view;
 
     @ManyToMany(cascade = {CascadeType.PERSIST,
             CascadeType.MERGE} ,fetch = FetchType.EAGER)

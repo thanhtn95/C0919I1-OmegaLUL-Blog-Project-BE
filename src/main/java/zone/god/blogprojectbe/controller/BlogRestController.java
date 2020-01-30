@@ -70,6 +70,10 @@ public class BlogRestController {
     @GetMapping("/blog/{id}")
     public ResponseEntity<Blog> getBlogById(@PathVariable("id") long id) {
         Blog blog = blogService.findById(id);
+        if (!blog.isPrivate()) {
+            blog.setView(blog.getView() + 1);
+            blogService.save(blog);
+        }
         return new ResponseEntity<>(blog, HttpStatus.OK);
     }
 

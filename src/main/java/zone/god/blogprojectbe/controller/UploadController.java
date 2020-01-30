@@ -10,6 +10,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import zone.god.blogprojectbe.JsonPayload.JPayload;
+import zone.god.blogprojectbe.service.firebase.FirebaseStorageFileUploadService;
 
 import java.io.File;
 
@@ -19,6 +20,8 @@ import java.io.File;
 public class UploadController {
     @Autowired
     Environment env;
+    @Autowired
+    FirebaseStorageFileUploadService firebaseStorageFileUploadService;
 
     @PostMapping(value = "/upload", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<JPayload> doUpload(@RequestParam("upload") MultipartFile file) {

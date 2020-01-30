@@ -45,12 +45,29 @@ public class FirebaseStorageFileUploadService {
                 }
                 String downloadUrl = firebaseStorageUploadService.upload(ApplicationConstants.BASE_PACKAGE_NAME + "/" + storageDir,
                         file.getOriginalFilename(), file.getBytes(), contentType);
-                downloadUrl = downloadUrl.replace("http","https");
                 result += downloadUrl + ",";
             }
-            result = result.substring(0,result.length()-1);
+            result = result.substring(0, result.length() - 1);
             return result;
         } catch (IOException e) {
+            return "fail";
+        }
+    }
+
+    public String uploadAvatarToFireBase(MultipartFile file) {
+        try {
+            String contentType = file.getContentType();
+            String storageDir;
+            if (contentType.startsWith("image")) {
+                storageDir = "images";
+            } else {
+                storageDir = "files";
+            }
+            String downloadUrl = firebaseStorageUploadService.upload(
+                    ApplicationConstants.BASE_PACKAGE_NAME + "/" + storageDir,
+                    file.getOriginalFilename(), file.getBytes(), contentType);
+            return downloadUrl;
+        }catch (Exception e){
             return "fail";
         }
     }
