@@ -13,9 +13,11 @@ import zone.god.blogprojectbe.service.BlogService;
 import zone.god.blogprojectbe.service.CommentService;
 import zone.god.blogprojectbe.service.UserService;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api")
+@RequestMapping("/api/comments")
 public class CommentRestController {
     @Autowired
     private CommentService commentService;
@@ -34,5 +36,16 @@ public class CommentRestController {
         comment.setBlog(blog);
         commentService.save(comment);
         return new ResponseEntity<>(new ResponseMessage("Added comment"), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/commentByBlog/{id}")
+    public ResponseEntity<?> getBlogComment(@PathVariable("id") long id) {
+        try {
+            Blog blog = blogService.findById(id);
+            List<Comment> comments = commentService.findAllByBlog(blog);
+            return new ResponseEntity<>(comments, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseMessage("Fail to get Comment of this blog post"), HttpStatus.NOT_FOUND);
+        }
     }
 }
