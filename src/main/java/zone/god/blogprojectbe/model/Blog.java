@@ -3,6 +3,7 @@ package zone.god.blogprojectbe.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -25,6 +26,7 @@ public class Blog {
     private String lastUpdatedDate;
     @JsonProperty
     private boolean isPrivate;
+    @Column(columnDefinition="COLUMN_TYPE int '0'")
     private int view;
 
     @ManyToMany(cascade = {CascadeType.PERSIST,

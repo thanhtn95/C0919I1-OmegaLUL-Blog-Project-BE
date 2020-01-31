@@ -39,6 +39,7 @@ public class BlogRestController {
         blog.setUser(user);
         blog.setCreatedDate(now);
         blog.setLastUpdatedDate(now);
+        blog.setView(0);
         blogService.save(blog);
         return new ResponseEntity<>(blog, HttpStatus.CREATED);
     }
