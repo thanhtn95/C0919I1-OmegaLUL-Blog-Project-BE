@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import zone.god.blogprojectbe.JsonPayload.JPayload;
 import zone.god.blogprojectbe.model.*;
 import zone.god.blogprojectbe.model.message.request.LoginForm;
 import zone.god.blogprojectbe.model.message.request.SignUpForm;

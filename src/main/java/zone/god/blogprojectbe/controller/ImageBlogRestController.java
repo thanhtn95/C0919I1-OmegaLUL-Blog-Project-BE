@@ -31,7 +31,7 @@ public class ImageBlogRestController {
 
     @PostMapping("/newImageBlog")
     public ResponseEntity<?> newImageBlog(@RequestParam("imageBlogInfo") String imageBlogInfo, @RequestParam("images") Optional<MultipartFile[]> files) throws JsonProcessingException {
-        if(!files.isPresent()){
+        if (!files.isPresent()) {
             return new ResponseEntity<>(new ResponseMessage("No Input Image"), HttpStatus.BAD_REQUEST);
         }
         ImageBlogForm imageBlogForm = new ObjectMapper().readValue(imageBlogInfo, ImageBlogForm.class);
@@ -52,6 +52,10 @@ public class ImageBlogRestController {
     @GetMapping("/imageBlog/{id}")
     public ResponseEntity<ImageBlog> getImageBlog(@PathVariable("id") Long id) {
         ImageBlog imageBlog = imageBlogService.findById(id);
+        if (!imageBlog.isPrivate()) {
+            imageBlog.setView(imageBlog.getView() + 1);
+            imageBlogService.save(imageBlog);
+        }
         return new ResponseEntity<>(imageBlog, HttpStatus.OK);
     }
 
@@ -71,9 +75,9 @@ public class ImageBlogRestController {
             String imgUrls = firebaseStorageFileUploadService.uploadMultipleFileToFireBase(files.get());
             imageBlog.setImageUrls(imageBlogForm.getImageUrls() + "," + imgUrls);
         } else {
-            if(imageBlogForm.getImageUrls().length() == 0){
+            if (imageBlogForm.getImageUrls().length() == 0) {
                 return new ResponseEntity<>(new ResponseMessage("No Input Image"), HttpStatus.BAD_REQUEST);
-            }else {
+            } else {
                 imageBlog.setImageUrls(imageBlogForm.getImageUrls());
             }
         }
