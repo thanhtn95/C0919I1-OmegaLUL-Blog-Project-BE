@@ -53,7 +53,7 @@ public class ImageBlogRestController {
     public ResponseEntity<ImageBlog> getImageBlog(@PathVariable("id") Long id) {
         ImageBlog imageBlog = imageBlogService.findById(id);
         if (!imageBlog.isPrivate()) {
-            imageBlog.setView(imageBlog.getView() + 1);
+            imageBlog.setViewCount(imageBlog.getViewCount() + 1);
             imageBlogService.save(imageBlog);
         }
         return new ResponseEntity<>(imageBlog, HttpStatus.OK);

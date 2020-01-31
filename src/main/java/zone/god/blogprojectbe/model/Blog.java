@@ -26,8 +26,7 @@ public class Blog {
     private String lastUpdatedDate;
     @JsonProperty
     private boolean isPrivate;
-    @Column(columnDefinition="COLUMN_TYPE int '0'")
-    private int view;
+    private long viewCount;
 
     @ManyToMany(cascade = {CascadeType.PERSIST,
             CascadeType.MERGE} ,fetch = FetchType.EAGER)

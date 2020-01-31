@@ -17,8 +17,7 @@ public class ImageBlog {
     private String createdDate;
     private String lastUpdatedDate;
     private String imageUrls;
-    @Column(columnDefinition="COLUMN_TYPE int '0'")
-    private int view;
+    private long viewCount;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
