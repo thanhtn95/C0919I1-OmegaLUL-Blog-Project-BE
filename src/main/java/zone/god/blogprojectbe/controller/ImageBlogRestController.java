@@ -38,6 +38,7 @@ public class ImageBlogRestController {
         String imgUrls = firebaseStorageFileUploadService.uploadMultipleFileToFireBase(files.get());
         ImageBlog imageBlog = new ImageBlog();
         imageBlog.setImageUrls(imgUrls);
+        imageBlog.setView(0);
         setDataFromForm(imageBlogForm, imageBlog);
         imageBlogService.save(imageBlog);
         return new ResponseEntity<>(imageBlog, HttpStatus.OK);
@@ -53,7 +54,7 @@ public class ImageBlogRestController {
     public ResponseEntity<ImageBlog> getImageBlog(@PathVariable("id") Long id) {
         ImageBlog imageBlog = imageBlogService.findById(id);
         if (!imageBlog.isPrivate()) {
-            imageBlog.setViewCount(imageBlog.getViewCount() + 1);
+            imageBlog.setView(imageBlog.getView() + 1);
             imageBlogService.save(imageBlog);
         }
         return new ResponseEntity<>(imageBlog, HttpStatus.OK);

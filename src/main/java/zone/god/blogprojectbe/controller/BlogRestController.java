@@ -39,7 +39,7 @@ public class BlogRestController {
         blog.setUser(user);
         blog.setCreatedDate(now);
         blog.setLastUpdatedDate(now);
-        blog.setViewCount(0);
+        blog.setView(0);
         blogService.save(blog);
         return new ResponseEntity<>(blog, HttpStatus.CREATED);
     }
@@ -72,7 +72,7 @@ public class BlogRestController {
     public ResponseEntity<Blog> getBlogById(@PathVariable("id") long id) {
         Blog blog = blogService.findById(id);
         if (!blog.isPrivate()) {
-            blog.setViewCount(blog.getViewCount() + 1);
+            blog.setView(blog.getView() + 1);
             blogService.save(blog);
         }
         return new ResponseEntity<>(blog, HttpStatus.OK);
