@@ -27,4 +27,9 @@ public class TagServiceImpl implements TagService {
         tagRepository.save(tag);
         return tag;
     }
+
+    @Override
+    public Tag findById(long id) {
+        return tagRepository.findById(id).get();
+    }
 }

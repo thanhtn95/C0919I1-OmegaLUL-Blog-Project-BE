@@ -8,4 +8,5 @@ public interface TagService {
     List<Tag> findAll();
     List<Tag> findAllById(Iterable<Long> id);
     Tag addTag(Tag tag);
+    Tag findById(long id);
 }

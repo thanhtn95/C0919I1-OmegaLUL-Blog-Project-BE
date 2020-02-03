@@ -92,6 +92,18 @@ public class BlogRestController {
         return new ResponseEntity<>(blogs, HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("/blog/topView/{id}")
+    public ResponseEntity<List<Blog>> getTopViewBlog(@PathVariable("id") long id) {
+        List<Blog> topView;
+        if (id == -1) {
+            topView = blogService.findTop5ByOrderByViewDesc();
+        } else {
+            Tag tag = tagService.findById(id);
+            topView = blogService.findTop5ByTagListContainingOrderByViewDesc(tag);
+        }
+        return new ResponseEntity<>(topView, HttpStatus.ACCEPTED);
+    }
+
     private void saveToBlogFromForm(Blog blog, BlogForm blogForm) {
         List<Tag> tags = tagService.findAllById(blogForm.getTagList());
         if (!Objects.isNull(blogForm.getId())) {

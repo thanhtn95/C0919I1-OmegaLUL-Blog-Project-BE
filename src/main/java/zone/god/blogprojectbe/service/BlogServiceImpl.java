@@ -3,6 +3,7 @@ package zone.god.blogprojectbe.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import zone.god.blogprojectbe.model.Blog;
+import zone.god.blogprojectbe.model.Tag;
 import zone.god.blogprojectbe.model.User;
 import zone.god.blogprojectbe.repository.BlogREpository;
 
@@ -12,6 +13,7 @@ import java.util.List;
 public class BlogServiceImpl implements BlogService {
     @Autowired
     private BlogREpository blogREpository;
+
     @Override
     public List<Blog> findAll() {
         return blogREpository.findAll();
@@ -19,7 +21,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Blog findById(long id) {
-        if(blogREpository.findById(id).isPresent()){
+        if (blogREpository.findById(id).isPresent()) {
             return blogREpository.findById(id).get();
         }
         return null;
@@ -43,5 +45,15 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public List<Blog> findByUser(User user) {
         return blogREpository.findAllByUser(user);
+    }
+
+    @Override
+    public List<Blog> findTop5ByOrderByViewDesc() {
+        return blogREpository.findTop5ByOrderByViewDesc();
+    }
+
+    @Override
+    public List<Blog> findTop5ByTagListContainingOrderByViewDesc(Tag tag) {
+        return blogREpository.findTop5ByTagListContainingOrderByViewDesc(tag);
     }
 }
