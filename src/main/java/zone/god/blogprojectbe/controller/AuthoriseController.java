@@ -155,6 +155,19 @@ public class AuthoriseController {
         return new ResponseEntity<>(new ResponseMessage("Wrong current password :("), HttpStatus.NOT_ACCEPTABLE);
     }
 
+    @PostMapping("/changeUserInfo")
+    public ResponseEntity<?> changeUserInfo(@RequestParam("name") String name, @RequestParam("avatarUrl") String avatarUrl, @RequestParam("username") String username) {
+        try{
+            User user = userService.findByUsername(username).get();
+            user.setName(name);
+            user.setAvatar(avatarUrl);
+            userService.saveUser(user);
+            return new ResponseEntity<>(new ResponseMessage("User Info change Success :)"),HttpStatus.ACCEPTED);
+        }catch (Exception e){
+            return new ResponseEntity<>(new ResponseMessage("User Info change Fail :("),HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
     private JwtResponse getJwtResponseForSocialLogin(SocialUser socialUser) {
         try {
             Authentication authentication = authenticationManager.authenticate(

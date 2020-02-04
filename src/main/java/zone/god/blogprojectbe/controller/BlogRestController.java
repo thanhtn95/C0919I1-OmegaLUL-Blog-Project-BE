@@ -85,8 +85,8 @@ public class BlogRestController {
         return new ResponseEntity<>(blogs, HttpStatus.OK);
     }
 
-    @GetMapping("/blog/userBlogs/{username}")
-    public ResponseEntity<List<Blog>> getUserBlogList(@PathVariable("username") String username) {
+    @PostMapping("/blog/userBlogs")
+    public ResponseEntity<List<Blog>> getUserBlogList(@RequestBody String username) {
         User user = userService.findByUsername(username).get();
         List<Blog> blogs = blogService.findByUser(user);
         return new ResponseEntity<>(blogs, HttpStatus.ACCEPTED);
