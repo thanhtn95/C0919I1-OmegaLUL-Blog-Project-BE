@@ -88,6 +88,8 @@ public class AuthoriseController {
         user.setPassword(encoder.encode(signUpRequest.getPassword()));
         user.setProvider("OmegaLUL");
         user.setAvatar(signUpRequest.getAvatar());
+        user.setGender(signUpRequest.getGender());
+        user.setDob(signUpRequest.getDob());
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
 
