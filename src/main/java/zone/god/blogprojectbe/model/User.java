@@ -45,6 +45,8 @@ public class User {
     private String password;
     private String provider;
     private String avatar;
+    private String dob;
+    private String gender;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -26,6 +26,7 @@ import zone.god.blogprojectbe.service.UserService;
 import zone.god.blogprojectbe.service.firebase.FirebaseStorageFileUploadService;
 
 import javax.validation.Valid;
+import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -117,29 +118,43 @@ public class AuthoriseController {
             if (getJwtResponseForSocialLogin(socialUser) == null) {
                 return new ResponseEntity<>(new ResponseMessage("That email has already been registed with an username! Please login with that username instead"), HttpStatus.BAD_REQUEST);
             }
-            return ResponseEntity.ok(getJwtResponseForSocialLogin(socialUser));
-        } else {
-            User user = new User();
-            user.setName(socialUser.getName());
-            user.setUsername(socialUser.getEmail());
-            user.setEmail(socialUser.getEmail());
-            user.setPassword(encoder.encode(socialUser.getEmail()));
-            user.setAvatar(socialUser.image);
-            user.setProvider(socialUser.provider);
-            Set<Role> roles = new HashSet<>();
-            Role userRole = roleService.findByName(RoleName.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
-            roles.add(userRole);
-            user.setRoles(roles);
-            userService.saveUser(user);
-            return ResponseEntity.ok(getJwtResponseForSocialLogin(socialUser));
         }
+        return ResponseEntity.ok(getJwtResponseForSocialLogin(socialUser));
+    }
+
+    @PostMapping("/socialLoginFirstTime")
+    public ResponseEntity<?> loginWithSocialAccount(@RequestParam("socialUser") String socialUserInfo, @RequestParam("dob") String dob, @RequestParam("gender") String gender) throws JsonProcessingException {
+        SocialUser socialUser = new ObjectMapper().readValue(socialUserInfo, SocialUser.class);
+        User user = new User();
+        user.setName(socialUser.getName());
+        user.setUsername(socialUser.getEmail());
+        user.setEmail(socialUser.getEmail());
+        user.setPassword(encoder.encode(socialUser.getEmail()));
+        user.setAvatar(socialUser.image);
+        user.setProvider(socialUser.provider);
+        user.setDob(dob);
+        user.setGender(gender);
+        Set<Role> roles = new HashSet<>();
+        Role userRole = roleService.findByName(RoleName.ROLE_USER)
+                .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
+        roles.add(userRole);
+        user.setRoles(roles);
+        userService.saveUser(user);
+        return ResponseEntity.ok(getJwtResponseForSocialLogin(socialUser));
     }
 
     @PostMapping("/user")
-    public ResponseEntity<?> getUserbyUsername(@RequestBody String username) {
+    public ResponseEntity<User> getUserbyUsername(@RequestBody String username) {
         User user = userService.findByUsername(username).get();
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PostMapping("/user/checkUser")
+    public ResponseEntity<?> checkIfUserExist(@RequestBody String username) {
+        if (userService.existsByUsername(username)) {
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(false, HttpStatus.OK);
     }
 
     @PostMapping("/changePass")
@@ -156,17 +171,20 @@ public class AuthoriseController {
     }
 
     @PostMapping("/changeUserInfo")
-    public ResponseEntity<?> changeUserInfo(@RequestParam("name") String name, @RequestParam("avatarUrl") String avatarUrl, @RequestParam("username") String username) {
-        try{
+    public ResponseEntity<?> changeUserInfo(@RequestParam("name") String name, @RequestParam("avatarUrl") String avatarUrl, @RequestParam("username") String username, @RequestParam("dob") String dob, @RequestParam("gender") String gender) {
+        try {
             User user = userService.findByUsername(username).get();
             user.setName(name);
             user.setAvatar(avatarUrl);
+            user.setGender(gender);
+            user.setDob(dob);
             userService.saveUser(user);
-            return new ResponseEntity<>(new ResponseMessage("User Info change Success :)"),HttpStatus.ACCEPTED);
-        }catch (Exception e){
-            return new ResponseEntity<>(new ResponseMessage("User Info change Fail :("),HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(new ResponseMessage("User Info change Success :)"), HttpStatus.ACCEPTED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseMessage("User Info change Fail :("), HttpStatus.NOT_ACCEPTABLE);
         }
     }
+
 
     private JwtResponse getJwtResponseForSocialLogin(SocialUser socialUser) {
         try {
