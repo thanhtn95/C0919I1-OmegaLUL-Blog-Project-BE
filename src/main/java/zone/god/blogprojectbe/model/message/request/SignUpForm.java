@@ -28,6 +28,9 @@ public class SignUpForm {
     private String avatar;
     private String dob;
     private String gender;
+    @NotBlank
+    @Size(min = 3, max = 40)
+    private String displayName;
 
     private Set<String> role;
 }

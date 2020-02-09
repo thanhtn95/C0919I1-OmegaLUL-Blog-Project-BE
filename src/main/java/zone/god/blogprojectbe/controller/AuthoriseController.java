@@ -79,6 +79,10 @@ public class AuthoriseController {
             return new ResponseEntity<>(new ResponseMessage("Fail -> Email is already in use!"),
                     HttpStatus.BAD_REQUEST);
         }
+        if (userService.existByDisplayName(signUpRequest.getDisplayName())) {
+            return new ResponseEntity<>(new ResponseMessage("Fail -> Display Name already taken"),
+                    HttpStatus.BAD_REQUEST);
+        }
 
         // Creating user's account
         User user = new User();
@@ -90,6 +94,7 @@ public class AuthoriseController {
         user.setAvatar(signUpRequest.getAvatar());
         user.setGender(signUpRequest.getGender());
         user.setDob(signUpRequest.getDob());
+        user.setDisplayName(signUpRequest.getDisplayName());
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
 
@@ -125,7 +130,11 @@ public class AuthoriseController {
     }
 
     @PostMapping("/socialLoginFirstTime")
-    public ResponseEntity<?> loginWithSocialAccount(@RequestParam("socialUser") String socialUserInfo, @RequestParam("dob") String dob, @RequestParam("gender") String gender) throws JsonProcessingException {
+    public ResponseEntity<?> loginWithSocialAccount(@RequestParam("socialUser") String socialUserInfo, @RequestParam("dob") String dob, @RequestParam("gender") String gender, @RequestParam("displayName") String displayName) throws JsonProcessingException {
+        if (userService.existByDisplayName(displayName)) {
+            return new ResponseEntity<>(new ResponseMessage("Fail -> Display Name already taken"),
+                    HttpStatus.BAD_REQUEST);
+        }
         SocialUser socialUser = new ObjectMapper().readValue(socialUserInfo, SocialUser.class);
         User user = new User();
         user.setName(socialUser.getName());
@@ -136,6 +145,7 @@ public class AuthoriseController {
         user.setProvider(socialUser.provider);
         user.setDob(dob);
         user.setGender(gender);
+        user.setDisplayName(displayName);
         Set<Role> roles = new HashSet<>();
         Role userRole = roleService.findByName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
@@ -159,6 +169,14 @@ public class AuthoriseController {
         return new ResponseEntity<>(false, HttpStatus.OK);
     }
 
+    @PostMapping("/user/checkDisplayName")
+    public ResponseEntity<?> checkifDisplayNameExist(@RequestBody String displayName) {
+        if (userService.existByDisplayName(displayName)) {
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(false, HttpStatus.OK);
+    }
+
     @PostMapping("/changePass")
     public ResponseEntity<?> changePassword(@RequestParam("loginForm") String loginInfo, @RequestParam("newPassword") String newPassword) throws JsonProcessingException {
         LoginForm loginForm = new ObjectMapper().readValue(loginInfo, LoginForm.class);
@@ -173,20 +191,25 @@ public class AuthoriseController {
     }
 
     @PostMapping("/changeUserInfo")
-    public ResponseEntity<?> changeUserInfo(@RequestParam("name") String name, @RequestParam("avatarUrl") String avatarUrl, @RequestParam("username") String username, @RequestParam("dob") String dob, @RequestParam("gender") String gender) {
-        try {
-            User user = userService.findByUsername(username).get();
-            user.setName(name);
-            user.setAvatar(avatarUrl);
-            user.setGender(gender);
-            user.setDob(dob);
-            userService.saveUser(user);
-            return new ResponseEntity<>(new ResponseMessage("User Info change Success :)"), HttpStatus.ACCEPTED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseMessage("User Info change Fail :("), HttpStatus.NOT_ACCEPTABLE);
+    public ResponseEntity<?> changeUserInfo(@RequestParam("name") String name, @RequestParam("avatarUrl") String avatarUrl, @RequestParam("username") String username, @RequestParam("dob") String dob, @RequestParam("gender") String gender, @RequestParam("displayName") String displayName) {
+        User user = userService.findByUsername(username).get();
+        if (displayName.equals(user.getDisplayName()) || (!displayName.equals(user.getDisplayName()) && !userService.existByDisplayName(displayName))) {
+            try {
+                user.setName(name);
+                user.setAvatar(avatarUrl);
+                user.setGender(gender);
+                user.setDob(dob);
+                user.setDisplayName(displayName);
+                userService.saveUser(user);
+                return new ResponseEntity<>(new ResponseMessage("User Info change Success :)"), HttpStatus.ACCEPTED);
+            } catch (Exception e) {
+                return new ResponseEntity<>(new ResponseMessage("User Info change Fail :("), HttpStatus.NOT_ACCEPTABLE);
+            }
+        } else {
+            return new ResponseEntity<>(new ResponseMessage("Fail -> Display Name already taken"),
+                    HttpStatus.BAD_REQUEST);
         }
     }
-
 
     private JwtResponse getJwtResponseForSocialLogin(SocialUser socialUser) {
         try {

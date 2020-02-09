@@ -10,4 +10,5 @@ public interface UserService {
     Boolean existsByEmail(String email);
     void saveUser(User user);
     User findByEmail(String email);
+    Boolean existByDisplayName(String displayName);
 }
