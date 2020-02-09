@@ -163,7 +163,7 @@ public class AuthoriseController {
 
     @PostMapping("/user/checkUser")
     public ResponseEntity<?> checkIfUserExist(@RequestBody String username) {
-        if(userService.existsByEmail(username)){
+        if(userService.existsByEmail(username) && !userService.existsByUsername(username)){
             return new ResponseEntity<>(new ResponseMessage("That email has already been registed with an username! Please login with that username instead"), HttpStatus.BAD_REQUEST);
         }
         if (userService.existsByUsername(username)) {
